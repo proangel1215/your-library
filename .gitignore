@@ -3,7 +3,7 @@
 /env
 .env
 /tests/__pycache__
-/tests/unit/__pycache__
+/tests/units/__pycache__
 /tests/functional/__pycache__
 /app/__pycache__
 /app/models/__pycache__
