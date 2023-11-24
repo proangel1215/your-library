@@ -14,6 +14,8 @@ def test_client():
 
 @pytest.fixture(scope="module")
 def init_database(test_client):
+    # with test_client.application.app_context():
+            
     db.create_all()
 
     user1 = User(
@@ -27,6 +29,6 @@ def init_database(test_client):
     db.session.add(user2)
     db.session.commit()
 
-    yield
+    yield db
 
     db.drop_all()
