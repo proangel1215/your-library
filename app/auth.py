@@ -27,12 +27,17 @@ def register():
             if password != password_confirmation:
                 flash("Les 2 mots de passe ne correspondent pas !", category="error")
             
-            user = User(username=pseudo, email=email, password_plaintext=password)
-            db.session.add(user)
-            db.session.commit()
-            flash("Inscription !")
             
-            return redirect("/")
+            try:
+                user = User(username=pseudo, email=email, password_plaintext=password)
+                db.session.add(user)
+                db.session.commit()
+                # login_user(new_user, remember=True)
+                flash("Inscription !")
+                return redirect("/")
+            except AssertionError as message:
+                flash("Erreur : {}".format(message), category="error") 
+
 
     return render_template("register.html", form=form)
 

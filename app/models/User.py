@@ -23,10 +23,10 @@ class User(db.Model, UserMixin):
 
     def set_password(self, password_plaintext):
         if not password_plaintext:
-            raise AssertionError("Password Missing")
+            raise AssertionError("Mot de passe manquant")
 
         if len(password_plaintext) < 8 or len(password_plaintext) > 70:
-            raise AssertionError("Password length must be between 8 and 50 characters")
+            raise AssertionError("Le mot de passe doit être entre 8 et 50 caractères")
 
         password_pattern = (
             "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
@@ -34,7 +34,7 @@ class User(db.Model, UserMixin):
 
         if not re.match(password_pattern, password_plaintext):
             raise AssertionError(
-                "Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number and 1 special character"
+                "Le mot de passe doit faire au moins 8 caractères et contenir au moins 1 caractère majuscule, 1 caractère minuscule, 1 chiffre et un caractère spécial"
             )
 
         self.password_hashed = generate_password_hash(password_plaintext)
@@ -42,13 +42,13 @@ class User(db.Model, UserMixin):
     @validates("username")
     def validate_username(self, key, username):
         if not username:
-            raise AssertionError("Missing username")
+            raise AssertionError("Pseudo manquant")
 
         if User.query.filter_by(username=username).first():
-            raise AssertionError("Username already in use")
+            raise AssertionError("Pseudo déjà utilisé")
 
         if len(username) < 2 or len(username) > 50:
-            raise AssertionError("Username must be between 2 and 50 characters")
+            raise AssertionError("Le pseudo ne doit pas dépassé 50 caractères, ni en dessous de 2")
 
         return username
 
@@ -58,7 +58,7 @@ class User(db.Model, UserMixin):
             raise AssertionError("Email missing")
 
         if User.query.filter_by(email=email).first():
-            raise AssertionError("Email already in use")
+            raise AssertionError("Email déjà utilisé")
 
         if "@" not in email:
             raise AssertionError("Wrong email format")
