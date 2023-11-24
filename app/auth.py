@@ -32,9 +32,9 @@ def register():
                 user = User(username=pseudo, email=email, password_plaintext=password)
                 db.session.add(user)
                 db.session.commit()
-                # login_user(new_user, remember=True)
-                flash("Inscription !")
-                return redirect("/")
+                login_user(new_user, remember=True)
+                flash("Vous êtes inscrit !")
+                return redirect("/home")
             except AssertionError as message:
                 flash("Erreur : {}".format(message), category="error") 
 
