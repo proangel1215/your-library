@@ -68,12 +68,12 @@ def test_duplicate_registration(test_client, init_database):
         "/register",
         data=dict(
             email="testalreadyexist@gmail.com",
-            pseudo="test",
+            pseudo="tests",
             password="FlaskIsGreat123!",
             password_confirmation="FlaskIsGreat123!",
         ),  
         follow_redirects=True,
     )
 
-   
-    assert b'email already exists' in response.data
+    print(response.data)
+    assert b'ERROR! Email (testalreadyexist@gmail.com) already exists in the database.' in response.data
