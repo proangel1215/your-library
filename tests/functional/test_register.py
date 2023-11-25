@@ -9,14 +9,18 @@ def test_register_route(test_client):
 
 
 def test_register_user_success(test_client, init_database):
-
-    form = RegisterForm(email="test52@example.com", pseudo="testuser", password="Test123!", password_confirmation="Test123!")
+    form = RegisterForm(
+        email="test52@example.com",
+        pseudo="testuser",
+        password="Test123!",
+        password_confirmation="Test123!",
+    )
 
     response = test_client.post("/register", data=form.data)
 
     # Check if the user has been added to the database
     with test_client.application.app_context():
-        user = User.query.filter_by(username='testuser').first()
+        user = User.query.filter_by(username="testuser").first()
         assert user is not None
 
     # Check for successful registration flash message and redirection
@@ -25,14 +29,17 @@ def test_register_user_success(test_client, init_database):
 
 
 def test_register_user_password_mismatch(test_client, init_database):
-
     test_client.get("/register")
-    form = RegisterForm(email="testkljj50@example.com", pseudo="testuser12", password="Test123", password_confirmation="Test123!")
+    form = RegisterForm(
+        email="testkljj50@example.com",
+        pseudo="testuser12",
+        password="Test123",
+        password_confirmation="Test123!",
+    )
 
     response = test_client.post(
         "/register",
         data=form.data,
-        
     )
     print(response.data)
 
@@ -42,11 +49,13 @@ def test_register_user_password_mismatch(test_client, init_database):
     assert b"Password dont match !" in response.data
 
 
-
-
 def test_duplicate_registration(test_client, init_database):
-
-    form = RegisterForm(email="test5@example.com", pseudo="testuser", password="Test123!", password_confirmation="Test123!")
+    form = RegisterForm(
+        email="test5@example.com",
+        pseudo="testuser",
+        password="Test123!",
+        password_confirmation="Test123!",
+    )
 
     test_client.post(
         "/register",
@@ -55,13 +64,12 @@ def test_duplicate_registration(test_client, init_database):
             pseudo="test",
             password="FlaskIsGreat123!",
             password_confirmation="FlaskIsGreat123!",
-        ), 
+        ),
     )
     # response = test_client.post("/register", data=form.data)
     with test_client.application.app_context():
-        user = User.query.filter_by(username='testuser').first()
+        user = User.query.filter_by(username="testuser").first()
         assert user is not None
-
 
     # Try registering with the same email address
     response = test_client.post(
@@ -71,9 +79,12 @@ def test_duplicate_registration(test_client, init_database):
             pseudo="tests",
             password="FlaskIsGreat123!",
             password_confirmation="FlaskIsGreat123!",
-        ),  
+        ),
         follow_redirects=True,
     )
 
     print(response.data)
-    assert b'ERROR! Email (testalreadyexist@gmail.com) already exists in the database.' in response.data
+    assert (
+        b"ERROR! Email (testalreadyexist@gmail.com) already exists in the database."
+        in response.data
+    )
