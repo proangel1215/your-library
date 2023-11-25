@@ -44,8 +44,8 @@ class User(db.Model, UserMixin):
         if not username:
             raise AssertionError("Pseudo manquant")
 
-        if User.query.filter_by(username=username).first():
-            raise AssertionError("Pseudo déjà utilisé")
+        # if User.query.filter_by(username=username).first():
+        #     raise AssertionError("Pseudo déjà utilisé")
 
         if len(username) < 2 or len(username) > 50:
             raise AssertionError("Le pseudo ne doit pas dépassé 50 caractères, ni en dessous de 2")
@@ -57,8 +57,8 @@ class User(db.Model, UserMixin):
         if not email:
             raise AssertionError("Email missing")
 
-        if User.query.filter_by(email=email).first():
-            raise AssertionError("Email déjà utilisé")
+        # if User.query.filter_by(email=email).first():
+        #     raise AssertionError("Email déjà utilisé")
 
         if "@" not in email:
             raise AssertionError("Wrong email format")

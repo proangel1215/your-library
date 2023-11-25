@@ -34,6 +34,7 @@ class TestingConfig(object):
     TESTING = True
     SECRET_KEY = os.getenv("SECRET_KEY", default="BAD_SECRET_KEY")
     SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(BASEDIR, 'db-test', 'test.db')}"
+    WTF_CSRF_ENABLED = False
 
 
 class ProductionConfig(Config):
