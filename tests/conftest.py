@@ -14,7 +14,6 @@ def test_client():
 
 @pytest.fixture(scope="module")
 def init_database(test_client):
-            
     db.create_all()
 
     user1 = User(
@@ -28,7 +27,17 @@ def init_database(test_client):
     db.session.add(user2)
     db.session.commit()
 
-    yield 
-    # db.session.rollback()
+    yield
 
     db.drop_all()
+
+
+@pytest.fixture(scope="function")
+def log_in_default_user(test_client):
+    test_client.post(
+        "/login", data={"email": "user2@gmail.com", "password": "User234!"}
+    )
+
+    yield
+
+    test_client.get("/logout")
