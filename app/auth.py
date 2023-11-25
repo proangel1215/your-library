@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, flash, redirect
-from .forms import RegisterForm
+from .forms import RegisterForm, LoginForm
 from .models.User import User
 from . import db
 from sqlalchemy.exc import IntegrityError
@@ -7,9 +7,10 @@ from sqlalchemy.exc import IntegrityError
 auth = Blueprint("auth", __name__)
 
 
-@auth.route("/", methods=["GET", "POST"])
+@auth.route("/login", methods=["GET", "POST"])
 def login():
-    return "login"
+    form = LoginForm()
+    return render_template("login.html", form=form)
 
 
 @auth.route("/home", methods=["GET", "POST"])
@@ -27,12 +28,10 @@ def register():
             pseudo = request.form.get("pseudo")
             password = request.form.get("password")
             password_confirmation = request.form.get("password_confirmation")
-            
 
             try:
                 if password != password_confirmation:
                     raise AssertionError("Password dont match !")
-                
                 else:
                     user = User(
                         username=pseudo, email=email, password_plaintext=password
@@ -45,7 +44,7 @@ def register():
                 db.session.rollback()
                 if "UNIQUE constraint failed: users.email" in str(message):
                     flash(f'ERROR! Email ({email}) already exists in the database.')
-                
+
                 elif "UNIQUE constraint failed: users.username" in str(message):
                     flash(f'ERROR! Username ({pseudo}) already exists in the database.')
 
