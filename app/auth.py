@@ -52,8 +52,8 @@ def register():
                     )
                     db.session.add(user)
                     db.session.commit()
-                    # login_user(new_user, remember=True)
-                    return redirect("/home")
+                    # login_user(user, remember=True)
+                    return redirect(url_for("books.home"))
             except IntegrityError as message:
                 db.session.rollback()
                 if "UNIQUE constraint failed: users.email" in str(message):
