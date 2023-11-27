@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required
 from .forms import SearchBookForm
-import requests
-import json 
+
+from .BookGoogleApi import BookGoogleApi
 
 books = Blueprint("books", __name__)
 
@@ -12,29 +12,46 @@ books = Blueprint("books", __name__)
 def home():
     form = SearchBookForm()
 
+    books_results = []
+
     if request.method == "POST" and form.validate_on_submit():
-
         search_str = form.search.data
+        book_google_api = BookGoogleApi("https://www.googleapis.com/books/v1/volumes")
 
-        response = requests.get(f'https://www.googleapis.com/books/v1/volumes?q={search_str}')
+        results = book_google_api.search_books(search_str)
 
-        books_results = []
+        for result in results:
+            book = {
+                "id": result["id"],
+            }
+            result = result["volumeInfo"]
 
-        if response.status_code == 200:
-            results = response.json()['items']
-            for result in results:
-                print(result['volumeInfo']['authors'])
-                # books_results.append({
-                #     "id": result['id'],
-                #     "title": result['volumeInfo']['title'],
-                #     "author": result['volumeInfo']['authors'][0],
-                #     # "description": result['description'],
-                #     "publishedDate": result['volumeInfo']['publishedDate'],
-                # })
+            book = {
+                "title": result["title"],
+            }
 
-            # print(results)
+            if "authors" in result:
+                book["authors"] = result["authors"]
+            else:
+                book["authors"] = []
 
+            if "description" in result:
+                book["description"] = result["description"]
+            else:
+                book["description"] = ""
 
-    
+            print(book["authors"])
 
-    return render_template("books/home.html", form=form, books_results=results)
+            if "publishedDate" in result:
+                book["publishedDate"] = result["publishedDate"]
+            else:
+                book["publishedDate"] = []
+
+            if "imageLinks" in result:
+                book["image_url"] = result["imageLinks"]["thumbnail"]
+            else:
+                book["publishedDate"] = None
+
+            books_results.append(book)
+
+    return render_template("books/home.html", form=form, books_results=books_results)
