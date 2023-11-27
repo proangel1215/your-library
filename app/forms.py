@@ -22,3 +22,7 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     email = EmailField("email", validators=[DataRequired()])
     password = PasswordField("password", validators=[DataRequired()])
+
+
+class SearchBookForm(FlaskForm):
+    search = StringField("search", validators=[DataRequired()])

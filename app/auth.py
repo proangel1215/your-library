@@ -25,7 +25,7 @@ def login():
         if user and user.is_password_correct(password):
             flash("Welcome {} !".format(user.username))
             login_user(user, remember=True)
-            return redirect("/home")
+            return redirect(url_for("books.home"))
 
         flash("Wrong credentials", category="error")
 
