@@ -1,57 +1,30 @@
 from flask import Blueprint, render_template, request
 from flask_login import login_required
 from .forms import SearchBookForm
-
 from .BookGoogleApi import BookGoogleApi
+from dotenv import load_dotenv
+import os
+
+project_folder = os.path.expanduser("")
+load_dotenv(os.path.join(project_folder, ".env"))
 
 books = Blueprint("books", __name__)
+
+DB_PORT = os.getenv("DB_PORT")
 
 
 @books.route("/", methods=["GET", "POST"])
 @login_required
 def home():
     form = SearchBookForm()
-
     books_results = []
 
     if request.method == "POST" and form.validate_on_submit():
         search_str = form.search.data
-        book_google_api = BookGoogleApi("https://www.googleapis.com/books/v1/volumes")
+        google_api_url = os.getenv("GOOGLE_API_URL")
 
-        results = book_google_api.search_books(search_str)
+        book_google_api = BookGoogleApi(google_api_url)
 
-        for result in results:
-            book = {
-                "id": result["id"],
-            }
-            result = result["volumeInfo"]
-
-            book = {
-                "title": result["title"],
-            }
-
-            if "authors" in result:
-                book["authors"] = result["authors"]
-            else:
-                book["authors"] = []
-
-            if "description" in result:
-                book["description"] = result["description"]
-            else:
-                book["description"] = ""
-
-            print(book["authors"])
-
-            if "publishedDate" in result:
-                book["publishedDate"] = result["publishedDate"]
-            else:
-                book["publishedDate"] = []
-
-            if "imageLinks" in result:
-                book["image_url"] = result["imageLinks"]["thumbnail"]
-            else:
-                book["publishedDate"] = None
-
-            books_results.append(book)
+        books_results = book_google_api.get_results_books_api(search_str)
 
     return render_template("books/home.html", form=form, books_results=books_results)
