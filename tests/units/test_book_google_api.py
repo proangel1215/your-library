@@ -40,4 +40,17 @@ def test_search_books():
 
         result = api.search_books("Flask Web Development")
 
-        assert result == books_data
+        assert result == {"status": "ok", "books": books_data}
+
+
+def test_search_books_error_handling():
+    with patch("requests.get") as mock_get:
+        mock_response = MagicMock()
+        mock_response.status_code = 404
+
+        mock_get.return_value = mock_response
+
+        api = BookGoogleApi(api_base_url="https://example.com/api")
+
+        result = api.search_books("Nonexistent Query")
+        assert result is None

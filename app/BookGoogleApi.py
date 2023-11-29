@@ -9,23 +9,26 @@ class BookGoogleApi:
         try:
             params = {"q": query}
             response = requests.get(f"{self.api_base_url}volumes", params=params)
-
+            print(response.status_code)
             if response.status_code == 200:
-                return response.json()["items"]
+                return {"status": "ok", "books": response.json()["items"]}
             else:
-                response.raise_for_status()  # Raises an HTTPError for bad responses
+                response.raise_for_status()
 
         except requests.RequestException as e:
             # Handle request exceptions (e.g., network issues)
             print(f"Error during search_books request: {e}")
-            return None
+            return {"status": "error", "books": []}
 
     def get_results_books_api(self, search_str):
         results = self.search_books(search_str)
 
+        if results["status"] == "error":
+            return results
+
         books = []
 
-        for result in results:
+        for result in results["books"]:
             book = {
                 "id": result["id"],
             }
@@ -58,7 +61,7 @@ class BookGoogleApi:
 
             books.append(book)
 
-        return books
+        return {"status": "ok", "books": books}
 
     # def get_book_details(self, book_id):
     #     try:

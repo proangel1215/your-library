@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash
 from flask_login import login_required
 from .forms import SearchBookForm
 from .BookGoogleApi import BookGoogleApi
@@ -26,5 +26,10 @@ def home():
         book_google_api = BookGoogleApi(google_api_url)
 
         books_results = book_google_api.get_results_books_api(search_str)
+
+        if books_results["status"] == "error":
+            flash("An error occured", category="error")
+
+        books_results = books_results["books"]
 
     return render_template("books/home.html", form=form, books_results=books_results)
