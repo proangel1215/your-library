@@ -36,7 +36,7 @@ class Book(db.Model):
     title = db.Column(db.String(255))
     google_api_id = db.Column(db.String(255))
     isbn = db.Column(db.String(20))
-    image_url = db.Column(db.String(255))
+    image_url = db.Column(db.Text)
     description = db.Column(db.Text)
     published_date = db.Column(db.Date)
     
@@ -50,18 +50,14 @@ class Book(db.Model):
     def __init__(
         self,
         title,
-        isbn,
-        author,
-        category,
+       
         published_date,
         description,
         image_url,
         google_api_id,
     ):
         self.title = title
-        self.isbn = isbn
-        self.author = author
-        self.category = category
+       
         self.published_date = published_date
         self.description = description
         self.image_url = image_url
