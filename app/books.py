@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, flash
-from flask_login import login_required
+from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask_login import login_required, current_user
 from .forms import SearchBookForm
 from .BookGoogleApi import BookGoogleApi
 from dotenv import load_dotenv
@@ -38,15 +38,35 @@ def home():
 @books.route("/books/details/<id>", methods=["GET"])
 @login_required
 def details(id):
-    google_api_url = os.getenv("GOOGLE_API_URL")
-    book_google_api = BookGoogleApi(google_api_url)
+    book = Book.query.filter_by(id=id).first()
+    if not book:
+        google_api_url = os.getenv("GOOGLE_API_URL")
+        book_google_api = BookGoogleApi(google_api_url)
 
-    result = book_google_api.get_result_book_details(id)
+        result = book_google_api.get_result_book_details(id)
 
-    if result["status"] == "error":
-        flash("An error occured", category="error")
+        if result["status"] == "error":
+            flash("An error occured", category="error")
+        else:
+            book = result["book"]
 
-    return render_template("books/details.html", book=result["book"])
+    return render_template("books/details.html", book=book)
+
+
+@books.route("/my-books", methods=["GET"])
+@login_required
+def favorites_books():
+    return render_template("books/favorites.html", books=current_user.books_list)
+
+
+@books.route("/books/remove/<id>", methods=["GET"])
+@login_required
+def remove_favorites(id):
+    book = Book.query.filter_by(id=id).first()
+    current_user.books_list.remove(book)
+    db.session.commit()
+
+    return redirect(url_for("books.favorites_books"))
 
 
 @books.route("/books/add/<id>", methods=["GET"])
@@ -60,60 +80,51 @@ def add_favorite(id):
     if result["status"] == "ok":
         book_data = result["book"]
         authors = []
-        
+
         # check if the book is already in the db
         book = Book.query.filter_by(google_api_id=id).first()
-        
-        if book:
-            # add the book to the user
-            # redirect
-            pass 
-        else:
-            new_book = Book(
+
+        if not book:
+            print(book_data)
+            book = Book(
                 title=book_data["title"],
                 google_api_id=book_data["id"],
                 image_url=book_data["image_url"],
                 description=book_data["description"],
                 published_date=book_data["published_date"],
             )
-            
-            db.session.add(new_book)
-            db.session.commit()
+
+            db.session.add(book)
             # must check authors, categories and add them if needed
-            for author_name in book_data['authors']:
-                
+            for author_name in book_data["authors"]:
                 author = Author.query.filter_by(name=author_name).first()
                 print(author_name)
                 print(author)
-                
+
                 if not author:
-                    print('ok')
+                    print("ok")
                     author = Author(name=author_name)
                     db.session.add(author)
-                    new_book.authors.append(author)
+                    book.authors.append(author)
                     db.session.commit()
                 authors.append(author)
-                                
+
             # categories = []
-            
-            for category_name in book_data['categories']:
-                
+
+            for category_name in book_data["categories"]:
                 category = Category.query.filter_by(name=category_name).first()
-                
+
                 if not category:
                     category = Category(name=category_name)
                     db.session.add(category)
-                    new_book.categories.append(category)
-                    db.session.commit()
-                
-            
-        #check if the book is already in db   
-            
-        
-      
+                    book.categories.append(category)
+
+        current_user.books_list.append(book)
+
+        db.session.commit()
+        flash("OK")
 
     if result["status"] == "error":
         flash("An error occured", category="error")
 
-    return "ok"
-    return render_template("books/details.html", book=result["book"])
+    return redirect(url_for("books.favorites_books"))

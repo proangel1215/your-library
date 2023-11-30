@@ -47,7 +47,7 @@ class BookGoogleApi:
             book["authors"] = book_data_api["authors"]
         else:
             book["authors"] = []
-            
+
         if "categories" in book_data_api:
             book["categories"] = book_data_api["categories"]
         else:
@@ -59,9 +59,11 @@ class BookGoogleApi:
             book["description"] = ""
 
         if "publishedDate" in book_data_api:
-            book["published_date"] = self.check_and_convert_date(book_data_api["publishedDate"])
+            book["published_date"] = self.check_and_convert_date(
+                book_data_api["publishedDate"]
+            )
         else:
-            book["published_date"] = []
+            book["published_date"] = None
 
         if "imageLinks" in book_data_api:
             book["image_url"] = book_data_api["imageLinks"]["thumbnail"]
@@ -96,10 +98,10 @@ class BookGoogleApi:
 
     def check_and_convert_date(self, date):
         # Check if the date matches the year format using a regular expression
-        if re.match(r'^\d{4}$', date):
+        if re.match(r"^\d{4}$", date):
             # If it matches, convert it to the desired format
             formatted_date = f"{date}-01-01"
             return formatted_date
         else:
             # If it doesn't match, return an indication that the format is incorrect
-            return "Invalid date format"
+            return None
