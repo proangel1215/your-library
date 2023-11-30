@@ -59,26 +59,16 @@ def test_search_details_book():
             },
         }
 
-        book = {
-                "id": "idbook1",
-                "title": "Title 1",
-                "authors": ["author 1"],
-                "publishedDate": "2009-12-04",
-                "description": "desc 1",
-            },
-        
-
-        # book = {"kind": "books#volumes", "items": books_data}
-
         mock_response.json.return_value = book_data
 
         mock_get.return_value = mock_response
 
         api = BookGoogleApi(api_base_url="https://example.com/api")
 
-        result = api.get_book_details("id")
+        result = api.search_book_details("id")
 
-        assert result == book
+        assert result == {"status": "ok", "book": book_data}
+
 
 
 # def test_search_books_error_handling():

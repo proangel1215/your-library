@@ -9,42 +9,37 @@ class BookGoogleApi:
         try:
             params = {"q": query}
             response = requests.get(f"{self.api_base_url}volumes", params=params)
-            print(response.status_code)
+
             if response.status_code == 200:
                 return {"status": "ok", "books": response.json()["items"]}
             else:
                 response.raise_for_status()
 
         except requests.RequestException as e:
-            # Handle request exceptions (e.g., network issues)
             print(f"Error during search_books request: {e}")
             return {"status": "error", "books": []}
-        
-        
-    def get_book_details(self, book_id):
+
+    def search_book_details(self, book_id):
         try:
-           
-            response = requests.get(f'{self.api_base_url}volumes/{book_id}')
+            response = requests.get(f"{self.api_base_url}volumes/{book_id}")
 
             if response.status_code == 200:
-                
-                return self.return_book_dict_from_api_result(response.json())
+                return {"status": "ok", "book": response.json()}
             else:
                 response.raise_for_status()
 
         except requests.RequestException as e:
-            print(f'Error during get_book_details request: {e}')
-            return None
-        
+            print(f"Error during get_book_details request: {e}")
+            return {"status": "error", "book": {}}
+
     def return_book_dict_from_api_result(self, book_data_api):
         book = {
-                "id": book_data_api["id"],
-            }
+            "id": book_data_api["id"],
+        }
 
         book_data_api = book_data_api["volumeInfo"]
 
-        book["title"]= book_data_api["title"],
-        
+        book["title"] = (book_data_api["title"],)
 
         if "authors" in book_data_api:
             book["authors"] = book_data_api["authors"]
@@ -65,9 +60,8 @@ class BookGoogleApi:
             book["image_url"] = book_data_api["imageLinks"]["thumbnail"]
         else:
             book["publishedDate"] = None
-            
+
         return book
-        
 
     def get_results_books_api(self, search_str):
         results = self.search_books(search_str)
@@ -77,10 +71,18 @@ class BookGoogleApi:
 
         books = []
 
-        for result in results["books"]: 
+        for result in results["books"]:
             book = self.return_book_dict_from_api_result(result)
             books.append(book)
 
         return {"status": "ok", "books": books}
 
+    def get_result_book_details(self, id):
+        result = self.search_book_details(id)
+        print(result)
 
+        if result["status"] == "error":
+            return result
+
+        book = self.return_book_dict_from_api_result(result["book"])
+        return {"status": "ok", "book": book}
