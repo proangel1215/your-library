@@ -29,6 +29,8 @@ def initialize_extensions(app):
     migrate.init_app(app, db)
 
     from app.models.User import User
+    from app.models.Book import Book 
+    
 
     login_manager.login_view = "auth.login"
 
