@@ -10,8 +10,6 @@ load_dotenv(os.path.join(project_folder, ".env"))
 
 books = Blueprint("books", __name__)
 
-DB_PORT = os.getenv("DB_PORT")
-
 
 @books.route("/", methods=["GET", "POST"])
 @login_required
@@ -33,3 +31,17 @@ def home():
         books_results = books_results["books"]
 
     return render_template("books/home.html", form=form, books_results=books_results)
+
+
+@books.route("/books/details/<id>", methods=["GET"])
+@login_required
+def details(id):
+    google_api_url = os.getenv("GOOGLE_API_URL")
+    book_google_api = BookGoogleApi(google_api_url)
+
+    result = book_google_api.get_result_book_details(id)
+
+    if result["status"] == "error":
+        flash("An error occured", category="error")
+
+    return render_template("books/details.html", book=result["book"])

@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% block title %}
+  Home
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row my-5 justify-content-center">
+      <h1 class="text-center">book details</h1>
+    </div>
+    <div class="row">
+      <div class="col-3 my-2">
+        {% if book %}
+          <div class="card" style="width: 18rem;">
+            {% if book.image_url %}
+              <img src="{{ book.image_url }}" class="card-img-top" alt="..." style="width:100%;height:200px;object-fit:cover" />
+            {% endif %}
+            <div class="card-body">
+              <h5 class="card-title">{{ book.title }}</h5>
+              {{ book.name }}
+              <h5>
+                Authors:{% if book.authors %}
+                  {{ book.authors|join(' | ') }}
+                {% else %}
+                  inconnu
+                {% endif %}
+              </h5>
+              <p class="card-text">{{ book.description[:150] }} ...</p>
+              <a href="" class="btn btn-primary">Add Favorite</a>
+              <a href="{{ url_for('books.details', id = book.id) }}" class="btn btn-primary">Details</a>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
