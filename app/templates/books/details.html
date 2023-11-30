@@ -3,34 +3,29 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container">
-    <div class="row my-5 justify-content-center">
-      <h1 class="text-center">book details</h1>
-    </div>
-    <div class="row">
-      <div class="col-3 my-2">
-        {% if book %}
-          <div class="card" style="width: 18rem;">
-            {% if book.image_url %}
-              <img src="{{ book.image_url }}" class="card-img-top" alt="..." style="width:100%;height:200px;object-fit:cover" />
-            {% endif %}
-            <div class="card-body">
-              <h5 class="card-title">{{ book.title }}</h5>
-              {{ book.name }}
-              <h5>
-                Authors:{% if book.authors %}
-                  {{ book.authors|join(' | ') }}
-                {% else %}
-                  inconnu
-                {% endif %}
-              </h5>
-              <p class="card-text">{{ book.description[:150] }} ...</p>
-              <a href="{{url_for('books.add_favorite', id=book.id)}}" class="btn btn-primary">Add Favorite</a>
-              <a href="{{ url_for('books.details', id = book.id) }}" class="btn btn-primary">Details</a>
-            </div>
-          </div>
-        {% endif %}
-      </div>
-    </div>
+<div class="container">
+  <div class="row my-5 justify-content-center">
+      <h1 class="text-center">Book Details</h1>
   </div>
+  <div class="row">
+      <div class="col-12 col-md-6 my-2">
+          {% if book %}
+          <img src="{{ book.image_url }}" class="img-fluid mb-3" alt="Book Image" style="object-fit: cover;">
+          <h5>{{ book.title }}</h5>
+          <p>{{ book.name }}</p>
+          <h5>Authors:{% if book.authors %}
+            {% for author in book.authors %}
+                {{ author.name if author.name else author }}{% if not loop.last %} | {% endif %}
+            {% endfor %}
+        {% else %}
+            inconnu
+        {% endif %}
+        </h5>
+          <p>{{ book.description }}</p>
+          <a href="{{url_for('books.add_favorite', id=book.id)}}" class="btn btn-primary">Add Favorite</a>
+          <a href="{{ url_for('books.details', id=book.id) }}" class="btn btn-primary">Details</a>
+          {% endif %}
+      </div>
+  </div>
+</div>
 {% endblock %}
