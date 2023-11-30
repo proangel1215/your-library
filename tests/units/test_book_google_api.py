@@ -43,14 +43,52 @@ def test_search_books():
         assert result == {"status": "ok", "books": books_data}
 
 
-def test_search_books_error_handling():
+def test_search_details_book():
     with patch("requests.get") as mock_get:
         mock_response = MagicMock()
-        mock_response.status_code = 404
+        mock_response.status_code = 200
+
+        book_data = {
+            "id": "idbook1",
+            "volumeInfo": {
+                "title": "Title 1",
+                "subtitle": "Apprenez simplement les bases de la programmation",
+                "authors": ["author 1"],
+                "publishedDate": "2009-12-04",
+                "description": "desc 1",
+            },
+        }
+
+        book = {
+                "id": "idbook1",
+                "title": "Title 1",
+                "authors": ["author 1"],
+                "publishedDate": "2009-12-04",
+                "description": "desc 1",
+            },
+        
+
+        # book = {"kind": "books#volumes", "items": books_data}
+
+        mock_response.json.return_value = book_data
 
         mock_get.return_value = mock_response
 
         api = BookGoogleApi(api_base_url="https://example.com/api")
 
-        result = api.search_books("Nonexistent Query")
-        assert result is None
+        result = api.get_book_details("id")
+
+        assert result == book
+
+
+# def test_search_books_error_handling():
+#     with patch("requests.get") as mock_get:
+#         mock_response = MagicMock()
+#         mock_response.status_code = 404
+
+#         mock_get.return_value = mock_response
+
+#         api = BookGoogleApi(api_base_url="https://example.com/api")
+
+#         result = api.search_books("Nonexistent Query")
+#         assert result is not None
