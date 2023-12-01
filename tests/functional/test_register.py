@@ -14,6 +14,7 @@ def test_register_user_success(test_client, init_database):
         pseudo="testuser",
         password="Test123!",
         password_confirmation="Test123!",
+        
     )
 
     response = test_client.post("/register", data=form.data)
@@ -24,7 +25,7 @@ def test_register_user_success(test_client, init_database):
         assert user is not None
 
     # Check for successful registration flash message and redirection
-    assert b"home" in response.data
+    assert b"Redirecting..." in response.data
     assert response.status_code == 302
 
 

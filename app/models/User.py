@@ -5,6 +5,13 @@ from .. import db
 import re
 
 
+books_list_table = db.Table(
+    "books_list",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id")),
+    db.Column("book_id", db.Integer, db.ForeignKey("books.id")),
+)
+
+
 class User(db.Model, UserMixin):
     __tablename__ = "users"
 
@@ -12,6 +19,9 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(150), unique=True, nullable=False)
     username = db.Column(db.String(150), unique=True, nullable=False)
     password_hashed = db.Column(db.String(150), nullable=False)
+    
+    books_list = db.relationship(
+        "Book", secondary=books_list_table, backref="users_books_list")
 
     def __init__(self, email, username, password_plaintext):
         self.email = email
@@ -45,7 +55,9 @@ class User(db.Model, UserMixin):
             raise AssertionError("Pseudo manquant")
 
         if len(username) < 2 or len(username) > 50:
-            raise AssertionError("Le pseudo ne doit pas dépassé 50 caractères, ni en dessous de 2")
+            raise AssertionError(
+                "Le pseudo ne doit pas dépassé 50 caractères, ni en dessous de 2"
+            )
 
         return username
 

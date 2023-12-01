@@ -1,0 +1,32 @@
+{% extends 'base.html' %} {% block title %}
+  Home
+{% endblock %} {% block content %}
+  <div class="row my-5 justify-content-center">
+    <h1 class="text-center">Search book</h1>
+    <div class="row justify-content-center">
+      {% for book in books %}
+        <div class="card col-12 col-md-6 col-lg-4 m-3" style="width: 18rem;">
+          {% if book.image_url %}
+            <img src="{{ book.image_url }}" class="card-img-top" alt="..." style="width:100%;height:200px;object-fit:cover" />
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{ book.title }}</h5>
+            {{ book.name }}
+            <h5>
+              Authors:{% if book.authors %}
+                {% for author in book.authors %}
+                  {{ author.name }}
+                {% endfor %}
+              {% else %}
+                inconnu
+              {% endif %}
+            </h5>
+            <p class="card-text">{{ book.description[:150] }} ...</p>
+            <a href="{{ url_for('books.remove_favorites', id = book.id) }}" class="btn btn-primary">Remove Favorite</a>
+            <a href="{{ url_for('books.details', id = book.id) }}" class="btn btn-primary">Details</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

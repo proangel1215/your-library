@@ -25,7 +25,7 @@ def login():
         if user and user.is_password_correct(password):
             flash("Welcome {} !".format(user.username))
             login_user(user, remember=True)
-            return redirect("/home")
+            return redirect(url_for("books.home"))
 
         flash("Wrong credentials", category="error")
 
@@ -52,8 +52,8 @@ def register():
                     )
                     db.session.add(user)
                     db.session.commit()
-                    # login_user(new_user, remember=True)
-                    return redirect("/home")
+                    # login_user(user, remember=True)
+                    return redirect(url_for("books.home"))
             except IntegrityError as message:
                 db.session.rollback()
                 if "UNIQUE constraint failed: users.email" in str(message):
