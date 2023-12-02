@@ -38,7 +38,12 @@ def home():
 @books.route("/books/details/<id>", methods=["GET"])
 @login_required
 def details(id):
+    
+    
     book = Book.query.filter_by(id=id).first()
+    
+    
+    
     if not book:
         google_api_url = os.getenv("GOOGLE_API_URL")
         book_google_api = BookGoogleApi(google_api_url)
@@ -56,7 +61,17 @@ def details(id):
 @books.route("/my-books", methods=["GET"])
 @login_required
 def favorites_books():
-    return render_template("books/favorites.html", books=current_user.books_list)
+    
+    
+    
+    
+    user_books = current_user.books_list
+    
+    
+    
+    
+    
+    return render_template("books/favorites.html", books=user_books)
 
 
 @books.route("/books/remove/<id>", methods=["GET"])

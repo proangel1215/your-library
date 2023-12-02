@@ -33,13 +33,10 @@ def test_search_books():
         books = {"kind": "books#volumes", "items": books_data}
 
         mock_response.json.return_value = books
-
         mock_get.return_value = mock_response
 
-        api = BookGoogleApi(api_base_url="https://example.com/api")
-
+        api = BookGoogleApi(api_base_url="https://www.googleapis.com/books/v1/")
         result = api.search_books("Flask Web Development")
-
         assert result == {"status": "ok", "books": books_data}
 
 

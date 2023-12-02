@@ -31,6 +31,7 @@ def test_register_user_success(test_client, init_database):
 
 def test_register_user_password_mismatch(test_client, init_database):
     test_client.get("/register")
+    
     form = RegisterForm(
         email="testkljj50@example.com",
         pseudo="testuser12",
@@ -42,7 +43,6 @@ def test_register_user_password_mismatch(test_client, init_database):
         "/register",
         data=form.data,
     )
-    print(response.data)
 
     assert response.status_code == 200
     assert b"Login" in response.data

@@ -27,3 +27,7 @@ jobs:
     - name: Run tests
       run: |
         pytest tests/
+
+    - name: Reject push on test failure (main branch)
+      if: failure() && github.ref == 'refs/heads/main'
+      run: exit 1

@@ -16,9 +16,9 @@ class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password_hashed = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password_hashed = db.Column(db.String(255), nullable=False)
     
     books_list = db.relationship(
         "Book", secondary=books_list_table, backref="users_books_list")
