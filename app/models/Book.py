@@ -36,28 +36,26 @@ class Book(db.Model):
     title = db.Column(db.String(255))
     google_api_id = db.Column(db.String(255))
     isbn = db.Column(db.String(20))
-    image_url = db.Column(db.Text)
+    image_url = db.Column(db.String(2000))
     description = db.Column(db.Text)
     published_date = db.Column(db.Date)
-    
-    
-    authors = db.relationship(
-        "Author", secondary=books_authors_table, backref="books")
+
+    authors = db.relationship("Author", secondary=books_authors_table, backref="books")
 
     categories = db.relationship(
-        "Category", secondary=books_categories_table, backref="books")
+        "Category", secondary=books_categories_table, backref="books"
+    )
 
     def __init__(
         self,
         title,
-       
         published_date,
         description,
         image_url,
         google_api_id,
     ):
         self.title = title
-       
+
         self.published_date = published_date
         self.description = description
         self.image_url = image_url

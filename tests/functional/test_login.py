@@ -15,17 +15,13 @@ def test_login_fail_wrong_credentials(test_client, init_database):
         data=form.data,
     )
 
-    print(response.data)
-
     assert response.status_code == 200
     assert b"Wrong credentials" in response.data
 
 
 def test_login_success(test_client, init_database):
     test_client.get("/login")
-
     form = LoginForm(email="user1@gmail.com", password="User123!")
-
     response = test_client.post("/login", data=form.data, follow_redirects=True)
 
     assert response.status_code == 200
@@ -48,7 +44,6 @@ def test_login_already_logged_in(test_client, init_database, log_in_default_user
 
     assert response.status_code == 200
     assert b"Already logged in!  Redirecting to home page..." in response.data
-
     assert b"Logout" in response.data
 
     assert b"Login" not in response.data
