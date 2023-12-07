@@ -5,7 +5,7 @@ from app.models.User import User
 def test_new_user():
     user = User(email="test1@gmail.com", username="test", password_plaintext="Test123!")
     assert user.email == "test1@gmail.com"
-    assert user.username == "tes"
+    assert user.username == "test"
     assert user.is_password_correct("Test123!") == True
 
 
